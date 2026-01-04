@@ -1,0 +1,543 @@
+
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>მართლწერის 80 რეკომენდაცია</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+      body {
+        font-family: 'Noto Sans Georgian', sans-serif;
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .animate-fade-in {
+        animation: fadeIn 0.3s ease-out forwards;
+      }
+    </style>
+</head>
+<body class="bg-slate-100">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useCallback } = React;
+
+        // --- COMPLETE, CONTEXTUALIZED, AND CORRECTED DATASET (RULES 1-79) ---
+        const allQuizQuestions = [
+            // Block 1: Rules 1-10
+            { id: 1, rule: 1, incorrect: 'ადგილი აქვს ბოროტმოქმედებას', correct: 'ხდება ბოროტმოქმედება', explanation: 'შესიტყვება „ადგილი აქვს“ რუსული ენიდან შემოსული კალკია. მის ნაცვლად უმჯობესია გამოვიყენოთ „ხდება“.' },
+            { id: 2, rule: 1, incorrect: 'ადგილი აქვს შეხვედრებს', correct: 'ეწყობა შეხვედრები', explanation: '„ადგილი აქვს“ კალკია. გამოიყენეთ „ეწყობა“ ან „იმართება“.' },
+            { id: 3, rule: 1, incorrect: 'ადგილი აქვს შეხვედრებს', correct: 'იმართება შეხვედრები', explanation: '„ადგილი აქვს“ კალკია. გამოიყენეთ „ეწყობა“ ან „იმართება“.' },
+            { id: 4, rule: 2, incorrect: 'კარგი ფილმი გააკეთა', correct: 'კარგი ფილმი გადაიღო', explanation: '„აკეთებს“ ნიშნავს რაიმეს ქმნას შრომით. ფილმის შემთხვევაში გამოიყენება „გადაიღო“ ან „შექმნა“.' },
+            { id: 5, rule: 2, incorrect: 'კარგი ფილმი გააკეთა', correct: 'კარგი ფილმი შექმნა', explanation: '„აკეთებს“ ნიშნავს რაიმეს ქმნას შრომით. ფილმის შემთხვევაში გამოიყენება „გადაიღო“ ან „შექმნა“.' },
+            { id: 6, rule: 2, incorrect: 'კარგი სიმღერა გააკეთა', correct: 'კარგი სიმღერა დაწერა', explanation: '„გააკეთა“ უმართებულოა. სიმღერის, პიესის შემთხვევაში გამოიყენება „დაწერა“ ან „შექმნა“.' },
+            { id: 7, rule: 2, incorrect: 'მან კონკურენტებს შეთავაზება გაუკეთა', correct: 'მან კონკურენტებს შესთავაზა', explanation: '„შეთავაზება გაუკეთა“ რთული და არაბუნებრივი ფორმაა. გამოიყენეთ მარტივი ზმნა „შესთავაზა“.' },
+            { id: 8, rule: 3, incorrect: 'საკვებმა ალერგია მისცა', correct: 'საკვებმა ალერგია გამოიწვია', explanation: '„ალერგია მისცა“ არასწორი შესიტყვებაა, სწორი ფორმაა „ალერგია გამოიწვია“.' },
+            { id: 9, rule: 4, incorrect: 'მე ამაყი ვარ, რომ ქართველმა სპორტსმენებმა გაიმარჯვეს', correct: 'ვამაყობ, რომ ქართველმა სპორტსმენებმა გაიმარჯვეს', explanation: '„ამაყი ვარ“ გამოიყენება თვისების აღსანიშნავად. მოქმედების შედეგით სიამაყის გამოსახატავად გამოიყენება „ვამაყობ“ ან „მეამაყება“.' },
+            { id: 10, rule: 4, incorrect: 'მე ამაყი ვარ, რომ ქართველმა სპორტსმენებმა გაიმარჯვეს', correct: 'მეამაყება, რომ ქართველმა სპორტსმენებმა გაიმარჯვეს', explanation: '„ამაყი ვარ“ გამოიყენება თვისების აღსანიშნავად. მოქმედების შედეგით სიამაყის გამოსახატავად გამოიყენება „ვამაყობ“ ან „მეამაყება“.' },
+            { id: 11, rule: 5, incorrect: 'ანუ დღეს გიამბობთ XII საუკუნის საქართველოს შესახებ...', correct: 'დღეს გიამბობთ XII საუკუნის საქართველოს შესახებ...', explanation: 'კავშირი „ანუ“ გამოიყენება მსგავსი მნიშვნელობის სიტყვების დასაკავშირებლად და არა საუბრის დასაწყებად.' },
+            { id: 12, rule: 6, incorrect: 'მინისტრმა გააჟღერა, რომ საკითხს განიხილავდა', correct: 'მინისტრმა აღნიშნა, რომ საკითხს განიხილავდა', explanation: '„აჟღერებს“ ძირითადად გამოიყენება მუსიკალურ ინსტრუმენტებთან. აზრის გამოთქმისას მისი გამოყენება უმართებულოა.' },
+            { id: 13, rule: 6, incorrect: 'მინისტრმა გააჟღერა, რომ საკითხს განიხილავდა', correct: 'მინისტრმა განაცხადა, რომ საკითხს განიხილავდა', explanation: '„აჟღერებს“ ძირითადად გამოიყენება მუსიკალურ ინსტრუმენტებთან. აზრის გამოთქმისას მისი გამოყენება უმართებულოა.' },
+            { id: 14, rule: 7, incorrect: 'არავითარ შემთხვევაში დაეთანხმება', correct: 'არავითარ შემთხვევაში არ დაეთანხმება', explanation: 'შესიტყვება „არავითარ შემთხვევაში“ ითხოვს ორმაგ უარყოფას ზმნასთან.' },
+            { id: 15, rule: 8, incorrect: 'არცერთი იყო მზად და არც მეორე', correct: 'არც ერთი იყო მზად და არც მეორე', explanation: 'თუ „არც ერთს“ მოსდევს „არც მეორე / მესამე...“, მაშინ „არც ერთი“ დაიწერება ცალ-ცალკე. სხვა შემთხვევაში იწერება ერთად: „არცერთი თქვენგანი“.' },
+            { id: 16, rule: 9, incorrect: 'თავმჯდომარემ დააფიქსირა, რომ სხდომა გაგრძელდებოდა', correct: 'თავმჯდომარემ განაცხადა, რომ სხდომა გაგრძელდებოდა', explanation: '„დააფიქსირა“ აზრის გამოთქმის მნიშვნელობით უმართებულოა. გამოიყენეთ „განაცხადა“ ან „აღნიშნა“.' },
+            { id: 17, rule: 10, incorrect: 'მას რომ ამის გაკეთება არ შეუძლია, აქედან გამომდინარე, ჩვენც უნდა გავჩერდეთ?', correct: 'მას რომ ამის გაკეთება არ შეუძლია, ამიტომ ჩვენც უნდა გავჩერდეთ?', explanation: '„აქედან გამომდინარე“ ხშირად უმართებულოდ გამოიყენება „ამიტომ“ ან „ამის გამო“ ნაცვლად.' },
+            
+            // Block 2: Rules 11-20
+            { id: 18, rule: 11, incorrect: 'ამ მოვლენების მთავარი აქტორი ხალხია', correct: 'ამ მოვლენების მთავარი მონაწილე ხალხია', explanation: '„აქტორი“ პოლიტიკური ტერმინია. ზოგად კონტექსტში გამოიყენეთ „მონაწილე“ ან „შემსრულებელი“.' },
+            { id: 19, rule: 12, incorrect: 'აცრას იკეთებს', correct: 'იცრება', explanation: '„აცრას იკეთებს“ არასწორია, რომელიც „ვაქცინას იკეთებს“ ანალოგიითაა გაჩენილი. სწორი ფორმაა „იცრება“ ან „აიცრა“.' },
+            { id: 20, rule: 12, incorrect: 'აცრა გაიკეთა', correct: 'აიცრა', explanation: '„აცრა გაიკეთა“ არასწორია. სწორი ფორმაა „აიცრა“.' },
+            { id: 21, rule: 13, incorrect: 'ახდენს შეფასებას', correct: 'აფასებს', explanation: 'რთული ზმნის ნაცვლად გამოიყენეთ მარტივი ფორმა. „ახდენს შეფასებას“ -> „აფასებს“; „ახდენს რეგისტრაციას“ -> „არეგისტრირებს“.' },
+            { id: 22, rule: 14, incorrect: 'პრეზიდენტი თავის გადაწყვეტილებას დღეს გაახმოვანებს', correct: 'პრეზიდენტი თავის გადაწყვეტილებას დღეს გამოაცხადებს', explanation: '„ახმოვანებს“ ნიშნავს ხმოვანს ხდის (მაგ. პერსონაჟს ფილმში). აზრის გამოთქმისას გამოიყენეთ „გამოაცხადებს“ ან „განაცხადებს“.' },
+            { id: 23, rule: 15, incorrect: 'ახორციელებს შეტევას', correct: 'უტევს', explanation: 'რთული ზმნების ნაცვლად გამოიყენეთ მარტივი ფორმები: „ახორციელებს შეტევას“ -> „უტევს“; „ახორციელებს შემოწმებას“ -> „ამოწმებს“.' },
+            { id: 24, rule: 16, incorrect: 'ბანკი რესპუბლიკამ', correct: 'ბანკმა რესპუბლიკამ', explanation: 'შედგენილი სახელის ბრუნებისას იბრუნვის ორივე ნაწილი, თუ საზღვრული წინ უძღვის მსაზღვრელს.' },
+            { id: 25, rule: 17, incorrect: 'ბიზნეს-გეგმა', correct: 'ბიზნესგეგმა', explanation: 'რთული სიტყვები, რომელთა პირველი ნაწილია „ბიზნეს“, იწერება ერთად, დეფისის გარეშე.' },
+            { id: 26, rule: 18, incorrect: 'ბოდიშით, დამაგვიანდა', correct: 'ბოდიშს გიხდით, დამაგვიანდა', explanation: '„ბოდიში“ არსებითი სახელია. თავაზიანობის გამოსახატავად გამოიყენება ზმნური ფორმა „მაპატიეთ“ ან შესიტყვება „ბოდიშს გიხდით“. „ბოდიშით“ არასწორი ფორმაა.' },
+            { id: 27, rule: 18, incorrect: 'ბოდიშით, ვერ გავიგე', correct: 'მაპატიეთ, ვერ გავიგე', explanation: '„ბოდიში“ არსებითი სახელია. თავაზიანობის გამოსახატავად გამოიყენება ზმნური ფორმა „მაპატიეთ“ ან შესიტყვება „ბოდიშს გიხდით“. „ბოდიშით“ არასწორი ფორმაა.' },
+            { id: 28, rule: 19, incorrect: 'რეკლამაზე გავდივართ', correct: 'ახლა რეკლამის დროა', explanation: '„რეკლამაზე გასვლა“ ჟურნალისტურ მეტყველებაში გავრცელებული შეცდომაა. გამოიყენეთ „რეკლამის დროა“ ან „რეკლამა ჩვენს ეთერში“.' },
+            { id: 29, rule: 20, incorrect: 'გამოსასვლელი დღე', correct: 'დასვენების დღე', explanation: '„გამოსასვლელი დღე“ არასწორი ფორმაა. გამოიყენეთ „დასვენების დღე“ ან „უქმე დღე“.' },
+            { id: 30, rule: 20, incorrect: 'გამოსასვლელი ტანსაცმელი', correct: 'სადღესასწაულო ტანსაცმელი', explanation: '„გამოსასვლელი“ არ გამოიყენება ტანსაცმელთან. გამოიყენეთ „სადღესასწაულო“ ან „საგარეო“.' },
+
+            // Block 3: Rules 21-30
+            { id: 31, rule: 21, incorrect: 'გასასამართლებელი საბუთი', correct: 'გასამართლებელი საბუთი', explanation: 'საბუთი ადამიანს ამართლებს და არა „ასამართლებს“. „გასასამართლებელი“ შეიძლება იყოს მხოლოდ პირი (ბრალდებული).' },
+            { id: 32, rule: 22, incorrect: 'გეგმიური', correct: 'გეგმური', explanation: 'სწორი ფორმაა „გეგმური“ და არა „გეგმიური“.' },
+            { id: 33, rule: 23, incorrect: 'გატანილი გოლის ავტორია მესი', correct: 'გოლი გაიტანა მესიმ', explanation: '„ავტორი“ აღნიშნავს ნაწარმოების შემქმნელს. სპორტში, გოლის შემთხვევაში, სწორია „გოლი გაიტანა“.' },
+            { id: 34, rule: 24, incorrect: 'დემონსტრატიული', correct: 'დემონსტრაციული', explanation: 'სწორი ფორმაა „დემონსტრაციული“, რომელიც ნაწარმოებია სიტყვიდან „დემონსტრაცია“.' },
+            { id: 35, rule: 25, incorrect: 'ეპიდემიოლოგიური ვითარება', correct: 'ეპიდემიური ვითარება', explanation: '„ეპიდემიოლოგიური“ უკავშირდება მედიცინის დარგს ეპიდემიოლოგიას (მაგ. კვლევა). „ეპიდემიური“ კი ახასიათებს ეპიდემიას (მაგ. ვითარება).' },
+            { id: 36, rule: 26, incorrect: 'ლუკა, განმარტე, რა არის არსებითი სახელი? - ესე იგი, არსებითი სახელი არის...', correct: 'ლუკა, განმარტე, რა არის არსებითი სახელი? - არსებითი სახელი არის...', explanation: 'კავშირი „ესე იგი“ გამოიყენება მსგავსი მნიშვნელობის სიტყვების დასაკავშირებლად და არა საუბრის დასაწყებად.' },
+            { id: 37, rule: 27, incorrect: 'ვერცერთი პირობა ვერ შესრულდა', correct: 'ვერც ერთი პირობა ვერ შესრულდა', explanation: 'თუ „ვერც ერთს“ მოსდევს „ვერც მეორე / მესამე...“, მაშინ „ვერც ერთი“ დაიწერება ცალ-ცალკე. სხვა შემთხვევაში იწერება ერთად: „ვერცერთი თქვენგანი“.' },
+            { id: 38, rule: 28, incorrect: 'ვიბეჭდები ჟურნალში', correct: 'ვბეჭდავ ჟურნალში სტატიას', explanation: 'სწორია „ვბეჭდავ (სტატიას)“ ან ვნებითი გვარის ფორმა „იბეჭდება (ჩემი სტატია)“.' },
+            { id: 39, rule: 29, incorrect: 'ვიდეო-კლიპი', correct: 'ვიდეოკლიპი', explanation: 'რთული სიტყვები, რომელთა პირველი ნაწილია „ვიდეო“, იწერება ერთად.' },
+            { id: 40, rule: 30, incorrect: 'ვკონკრეტდები ამ საკითხზე', correct: 'ვაკონკრეტებ ამ საკითხს', explanation: '„ვკონკრეტდები“ არასწორი ფორმაა. სწორია „ვაკონკრეტებ“.' },
+            { id: 41, rule: 30, incorrect: 'ვმეორდები', correct: 'ვიმეორებ (ნათქვამს)', explanation: '„ვმეორდები“ არასწორი ფორმაა. სწორია „ვიმეორებ“.' },
+
+            // Block 4: Rules 31-40
+            { id: 42, rule: 31, incorrect: 'კავშირზე არ გამოვიდა', correct: 'არ დაგვიკავშირდა', explanation: '„კავშირზე გამოსვლა“ პირდაპირი თარგმანია. გამოიყენეთ „დაკავშირება“.' },
+            { id: 43, rule: 32, incorrect: 'კარგით, მოვალ', correct: 'კარგი, მოვალ', explanation: '„კარგი“ თანხმობის გამოსახატავად გამოიყენება. „კარგით“ არასწორი ფორმაა, რომელიც ზმნის მრავლობითი რიცხვის ანალოგიითაა გაჩენილი.' },
+            { id: 44, rule: 33, incorrect: 'კიბერ-შეტევა', correct: 'კიბერშეტევა', explanation: 'რთული სიტყვები, რომელთა პირველი ნაწილია „კიბერ“, იწერება ერთად.' },
+            { id: 45, rule: 34, incorrect: 'კოვიდ 19-ს', correct: 'კოვიდ-19-ს', explanation: 'სიტყვებს, რომელთა მეორე ნაწილი ციფრია, ბოლოსართი დეფისით გამოეყოფა.' },
+            { id: 46, rule: 35, incorrect: 'კოვიდ-პანდემია', correct: 'კოვიდპანდემია', explanation: 'რთული სიტყვები, რომელთა პირველი ნაწილია „კოვიდ“, იწერება ერთად.' },
+            { id: 47, rule: 36, incorrect: 'გუშინ გვქონდა კომუნიკაცია სხვადასხვა მხარესთან', correct: 'გუშინ გვქონდა შეხვედრა სხვადასხვა მხარესთან', explanation: '„კომუნიკაცია“ ხშირად უმართებულოდ გამოიყენება „შეხვედრის“, „მოლაპარაკების“, „მსჯელობის“ ნაცვლად.' },
+            { id: 48, rule: 36, incorrect: 'ხანგრძლივი კომუნიკაციის შემდეგ პრობლემა გადაიჭრა', correct: 'ხანგრძლივი მოლაპარაკების შემდეგ პრობლემა გადაიჭრა', explanation: '„კომუნიკაცია“ ხშირად უმართებულოდ გამოიყენება „შეხვედრის“, „მოლაპარაკების“, „მსჯელობის“ ნაცვლად.' },
+            { id: 49, rule: 37, incorrect: 'მსჯელობას კონკრეტიკა აკლია', correct: 'მსჯელობას კონკრეტულობა აკლია', explanation: '„კონკრეტიკა“ არასწორი ფორმაა. გამოიყენეთ „კონკრეტულობა“, „კონკრეტიზაცია“ ან „დაკონკრეტება“.' },
+            { id: 50, rule: 38, incorrect: 'კორონას საწინააღმდეგო ვაქცინა', correct: 'კორონის საწინააღმდეგო ვაქცინა', explanation: 'უცხო ენიდან შემოსული \'ა\'-ზე დაბოლოებული არსებითი სახელები (ადამიანის სახელების გარდა) იკვეცება ბრუნვისას.' },
+            { id: 51, rule: 39, incorrect: 'კორონა-ვირუსი', correct: 'კორონავირუსი', explanation: 'რთული სიტყვები, სადაც პირველი კომპონენტია „კორონა“, იწერება ერთად.' },
+            { id: 52, rule: 40, incorrect: 'კორპორატიული საღამო', correct: 'კორპორაციული საღამო', explanation: 'სწორი ფორმაა „კორპორაციული“, რომელიც ნაწარმოებია სიტყვიდან „კორპორაცია“.' },
+
+            // Block 5: Rules 41-50
+            { id: 53, rule: 41, incorrect: 'ორი კრიმინალი დაიჭირეს', correct: 'ორი დამნაშავე დაიჭირეს', explanation: '„კრიმინალი“ ნიშნავს სისხლის სამართლის დანაშაულს და არა დამნაშავეს.' },
+            { id: 54, rule: 42, incorrect: 'ლექს „განთიადმა“', correct: 'ლექსმა „განთიადმა“', explanation: 'როდესაც სათაური სახელობით ბრუნვაშია (მაგ. „განთიადი“), მოთხრობით ბრუნვაში მსაზღვრელიც და სათაურიც იბრუნვის.' },
+            { id: 55, rule: 43, incorrect: 'ლექს „უსიყვარულოდმა“', correct: 'ლექსმა „უსიყვარულოდ“', explanation: 'თუ სათაური არ არის სახელობითი ბრუნვის ფორმით (მაგ. ზმნიზედაა, როგორც „უსიყვარულოდ“), ის არ იბრუნვის. ბრუნვის ნიშნებს ირთავს მხოლოდ მსაზღვრელი სიტყვა.' },
+            { id: 56, rule: 44, incorrect: 'ის მარხვაზეა', correct: 'ის მარხულობს', explanation: '„მარხვაზეა“ არასწორი ფორმაა. სწორია „მარხულობს“ ან „მარხვას ინახავს“.' },
+            { id: 57, rule: 44, incorrect: 'ის მარხვაზეა', correct: 'ის მარხვას ინახავს', explanation: '„მარხვაზეა“ არასწორი ფორმაა. სწორია „მარხულობს“ ან „მარხვას ინახავს“.' },
+            { id: 58, rule: 45, incorrect: 'რამდენი მაცხოვრებელია ქალაქში?', correct: 'რამდენი მცხოვრებია ქალაქში?', explanation: '„მაცხოვრებელი“ არის ის, ვინც სხვას აცხოვრებს. „მცხოვრები“ არის ის, ვინც ცხოვრობს.' },
+            { id: 59, rule: 46, incorrect: 'ჯერ ერთი, დააგვიანდა, მეორეც ერთი, ბოდიში არ მოიხადა', correct: 'ჯერ ერთი, დააგვიანდა, მეორეც, ბოდიში არ მოიხადა', explanation: '„ჯერ ერთი“-ს შემდეგ გამოიყენება „მეორეც“, „მესამეც“ და არა „მეორეც ერთი“, „მესამეც ერთი“.' },
+            { id: 60, rule: 47, incorrect: 'ფესტივალი ორი კვირა მიდიოდა', correct: 'ფესტივალი ორი კვირა გრძელდებოდა', explanation: 'პროცესის ხანგრძლივობის აღსანიშნავად „მიდის“ ზმნის გამოყენება არასწორია. უნდა გამოვიყენოთ „გრძელდება“ ან „მიმდინარეობს“.' },
+            { id: 61, rule: 48, incorrect: 'რას გვეტყვით პრეზიდენტთან მიმართებაში?', correct: 'რას გვეტყვით პრეზიდენტთან მიმართებით?', explanation: '„-ში“ თანდებულის გამოყენება არასწორია. სწორი ფორმაა „მიმართებით“.' },
+            { id: 62, rule: 49, incorrect: 'ყველა ძალა მოაბილიზა', correct: 'ყველა ძალის მობილიზაცია განახორციელა', explanation: '„მოაბილიზა“ მცდარი ფორმაა. „მო“ ზმნისწინი შეცდომითაა მიჩნეული. სწორია „მობილიზება/მობილიზაცია განახორციელა“ ან „მობილიზებულია“.' },
+            { id: 63, rule: 50, incorrect: 'მოუყვა დედამ შვილს ზღაპარი', correct: 'მოუყვა დედა შვილს ზღაპარს', explanation: 'ზმნა „მოყოლა“ მოითხოვს სუბიექტს სახელობით ბრუნვაში, პირდაპირ ობიექტს - მიცემითში, ირიბ ობიექტს - მიცემითში. სწორია: „დედა მოუყვა შვილს ზღაპარს“. ან „დედამ უამბო შვილს ზღაპარი“.' },
+
+            // Block 6: Rules 51-60
+            { id: 64, rule: 51, incorrect: 'გიორგი სკოლაში მოღვაწეობს', correct: 'გიორგი სკოლაში მუშაობს', explanation: '„მოღვაწეობს“ გამოიყენება იმ ადამიანების მიმართ, რომელთაც განსაკუთრებული ღვაწლი მიუძღვის ქვეყნის წინაშე. ჩვეულებრივი საქმიანობისთვის გამოიყენება „მუშაობს“.' },
+            { id: 65, rule: 52, incorrect: 'მისი დაკავება მოხდა უსამართლოდ', correct: 'ის დააკავეს უსამართლოდ', explanation: '„მოხდა“ ზმნასთან მოქმედების სახელის (დაკავება, დარბევა) გამოყენება დაუშვებელია. გამოიყენეთ ზმნის პირიანი ფორმა.' },
+            { id: 66, rule: 53, incorrect: 'მე მამა გიორგის მრევლი ვარ', correct: 'მე მამა გიორგის მრევლის წევრი ვარ', explanation: '„მრევლი“ კრებითი სახელია. ერთი პირის აღსანიშნავად გამოიყენება „მრევლის წევრი“.' },
+            { id: 67, rule: 54, incorrect: 'ნარკო-ბიზნესი', correct: 'ნარკობიზნესი', explanation: 'რთული სიტყვები, რომელთა პირველი ნაწილია „ნარკო“, იწერება ერთად.' },
+            { id: 68, rule: 55, incorrect: 'ის გუშინ დაიბარეს ნოტარიუსში', correct: 'ის გუშინ დაიბარეს ნოტარიატში', explanation: '„ნოტარიუსი“ არის პირი, ხოლო „ნოტარიატი“ — ორგანო, დაწესებულება. სწორია „დაიბარეს ნოტარიატში“.' },
+            { id: 69, rule: 56, incorrect: 'პიარ-გეგმა', correct: 'პიარგეგმა', explanation: 'რთული სიტყვები, რომელთა პირველი ნაწილია „პიარ“, იწერება ერთად.' },
+            { id: 70, rule: 57, incorrect: '1-ლი იანვარი', correct: '1-ელი იანვარი', explanation: 'რიგობითი რიცხვითი სახელი იწერება „-ელი“ სუფიქსით და არა „-ლი“.' },
+            { id: 71, rule: 58, incorrect: 'პოლიტიზირება', correct: 'პოლიტიზება', explanation: 'სწორი ფორმაა „პოლიტიზება“ და არა „პოლიტიზირება“.' },
+            { id: 72, rule: 59, incorrect: 'ის მისი პროტეჟეა', correct: 'ის მისი პროტექტორია', explanation: '„პროტეჟე“ არის ობიექტი, რომელსაც მფარველობენ. „პროტექტორი“ არის სუბიექტი, ვინც მფარველობს.' },
+            { id: 73, rule: 60, incorrect: 'ოპოზიციის შენიშვნებს ვერ გავიზიარებთ, რამეთუ ისინი სიმართლეს არ შეესაბამება', correct: 'ოპოზიციის შენიშვნებს ვერ გავიზიარებთ, რადგან ისინი სიმართლეს არ შეესაბამება', explanation: '„რამეთუ“ ძველი ქართული კავშირია და თანამედროვე მეტყველებაში გამოიყენება მხოლოდ სტილიზაციისთვის. ჩვეულებრივ გამოიყენეთ „რადგან“ ან „ვინაიდან“.' },
+
+            // Block 7: Rules 61-70
+            { id: 74, rule: 61, incorrect: 'აღწერეს რეალისტური მდგომარეობა', correct: 'აღწერეს რეალური მდგომარეობა', explanation: '„რეალისტური“ უკავშირდება რეალიზმს (მხატვრული მეთოდი). „რეალური“ ნიშნავს ნამდვილად არსებულს, ჭეშმარიტს.' },
+            { id: 75, rule: 62, incorrect: 'ვმუშაობთ დიალოგურ რეჟიმში', correct: 'ვმუშაობთ დიალოგური რეჟიმით', explanation: 'მოქმედება სრულდება გარკვეული წესით/რეჟიმით და არა წესში/რეჟიმში.' },
+            { id: 76, rule: 63, incorrect: 'რესურს-ოთახი', correct: 'რესურსოთახი', explanation: 'რთული სიტყვები, რომელთა პირველი ნაწილია „რესურს“, იწერება ერთად.' },
+            { id: 77, rule: 64, incorrect: 'შედეგი სახეზეა', correct: 'შედეგი აშკარაა', explanation: '„სახეზეა“ არასწორი ფორმაა. გამოიყენეთ „არის“, „იმყოფება“, „აშკარაა“, „ნათელია“.' },
+            { id: 78, rule: 64, incorrect: 'ყველა დეპუტატი სახეზეა', correct: 'ყველა დეპუტატი აქ არის', explanation: '„სახეზეა“ არასწორი ფორმაა. გამოიყენეთ „არის“, „იმყოფება“, „აშკარაა“, „ნათელია“.' },
+            { id: 79, rule: 65, incorrect: 'სენსიტიური საკითხი', correct: 'მგრძნობიარე საკითხი', explanation: '„სენსიტიური“ ლათინური სიტყვის არასწორი ადაპტაციაა. ქართული შესატყვისებია: „მგრძნობიარე“, „ფაქიზი“.' },
+            { id: 80, rule: 66, incorrect: 'სერვის-ცენტრი', correct: 'სერვისცენტრი', explanation: 'რთული სიტყვები, რომელთა პირველი ნაწილია „სერვის“, იწერება ერთად.' },
+            { id: 81, rule: 67, incorrect: 'ტელე და რადიო გადაცემა', correct: 'ტელე- და რადიოგადაცემა', explanation: 'როდესაც რთული სიტყვის ორივე ნაწილს საერთო დაბოლოება აქვს, იგი დაერთვის მხოლოდ მეორე ნაწილს, პირველს კი დეფისი დაესმის.' },
+            { id: 82, rule: 68, incorrect: 'ტელე-არხი', correct: 'ტელეარხი', explanation: 'რთული სიტყვები, რომელთა პირველი ნაწილია „ტელე“, იწერება ერთად.' },
+            { id: 83, rule: 69, incorrect: 'ეს უნებლიეთ გავაკეთე', correct: 'ეს უნებლიედ გავაკეთე', explanation: 'სწორი ფორმაა „უნებლიედ“. ფორმა „უნებლიეთ“ მართებულია მხოლოდ გამოთქმაში: „ნებსით თუ უნებლიეთ“.' },
+            { id: 84, rule: 70, incorrect: 'ის ამ საქმის მთავარი ფიგურანტია', correct: 'ის ამ საქმის მთავარი მონაწილეა', explanation: '„ფიგურანტი“ უმართებულოდ გამოიყენება „მონაწილის“ ნაცვლად.' },
+
+            // Block 8: Rules 71-79
+            { id: 85, rule: 71, incorrect: 'ფიტნეს-კლუბი', correct: 'ფიტნესკლუბი', explanation: 'რთული სიტყვები, რომელთა პირველი ნაწილია „ფიტნეს“, იწერება ერთად.' },
+            { id: 86, rule: 72, incorrect: 'ფოტო-გამოფენა', correct: 'ფოტოგამოფენა', explanation: 'რთული სიტყვები, რომელთა პირველი ნაწილია „ფოტო“, იწერება ერთად.' },
+            { id: 87, rule: 73, incorrect: 'მთავრობამ საუკეთესო შედეგი დადო', correct: 'მთავრობამ საუკეთესო შედეგს მიაღწია', explanation: '„შედეგის დადება“ არაბუნებრივი შესიტყვებაა. ქართულისთვის ბუნებრივია „შედეგის მიღწევა“ ან „შედეგის მიღება“.' },
+            { id: 88, rule: 73, incorrect: 'მკვლევრებმა ახალი შედეგები დადეს', correct: 'მკვლევრებმა ახალი შედეგები მიიღეს', explanation: '„შედეგის დადება“ არაბუნებრივი შესიტყვებაა. ქართულისთვის ბუნებრივია „შედეგის მიღწევა“ ან „შედეგის მიღება“.' },
+            { id: 89, rule: 74, incorrect: 'ჩამოვყალიბდეთ ამ საკითხთან დაკავშირებით', correct: 'ჩამოვაყალიბოთ აზრი ამ საკითხზე', explanation: '„ჩამოყალიბება“ პირის მიმართ ნიშნავს მის პროფესიონალად, პიროვნებად ფორმირებას. აზრის, მოსაზრების შემთხვევაში გამოიყენება „ჩამოვაყალიბოთ“.' },
+            { id: 90, rule: 75, incorrect: 'სხდომა ჩანიშნულია ხუთშაბათს, 14:00 საათზე', correct: 'სხდომა დანიშნულია ხუთშაბათს, 14:00 საათზე', explanation: 'თუ მოქმედების დრო ზუსტად არის განსაზღვრული, გამოიყენება „დანიშნულია“. „ჩანიშნულია“ ნიშნავს, რომ ნავარაუდევია, იგეგმება.' },
+            { id: 91, rule: 76, incorrect: 'წარმოებს გაყიდვა', correct: 'იყიდება', explanation: 'რთული ზმნების ნაცვლად გამოიყენეთ მარტივი ფორმები: „წარმოებს გაყიდვა“ -> „იყიდება“; „წარმოებს დამზადება“ -> „მზადდება“.' },
+            { id: 92, rule: 77, incorrect: 'ეს წინააღმდეგობაში მოდის იმ თვალსაზრისთან', correct: 'ეს ეწინააღმდეგება იმ თვალსაზრისს', explanation: '„წინააღმდეგობაში მოსვლა“ პირდაპირი თარგმანია. გამოიყენეთ მარტივი ზმნა „ეწინააღმდეგება“.' },
+            { id: 93, rule: 78, incorrect: 'ხილ-ბოსტანი', correct: 'ხილ-ბოსტნეული', explanation: 'სწორი ფორმაა „ხილ-ბოსტნეული“.' },
+            { id: 94, rule: 79, incorrect: 'არასოდეს დავივიწყებთ მის ხსოვნას', correct: 'არასოდეს დავივიწყებთ მის სახელს', explanation: '„ხსოვნის დავიწყება“ უმართებულო შესიტყვებაა. სწორია „მისი სახელის დავიწყება“ ან უბრალოდ „მისი დავიწყება“.' }
+        ];
+
+        // --- ICONS ---
+        const CheckIcon = (props) => (
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" {...props}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        );
+
+        const XIcon = (props) => (
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" {...props}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        );
+
+        // --- COMPONENTS ---
+        const WelcomeScreen = ({ onStart }) => {
+            const [name, setName] = useState('');
+            const [surname, setSurname] = useState('');
+
+            const handleStart = () => {
+                if (name.trim() && surname.trim()) {
+                    onStart({ name: name.trim(), surname: surname.trim() });
+                }
+            };
+
+            return (
+                <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8 w-full max-w-lg mx-auto animate-fade-in">
+                    <h1 className="text-2xl md:text-3xl font-bold text-center text-slate-800 mb-2">მართლწერის 80 რეკომენდაცია</h1>
+                    <p className="text-center text-slate-500 mb-8">შეიყვანეთ თქვენი მონაცემები ტესტის დასაწყებად</p>
+                    
+                    <div className="space-y-4 mb-8">
+                        <div>
+                            <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-1">სახელი</label>
+                            <input 
+                                type="text" 
+                                id="name"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                                placeholder=""
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="surname" className="block text-sm font-medium text-slate-700 mb-1">გვარი</label>
+                            <input 
+                                type="text" 
+                                id="surname"
+                                value={surname}
+                                onChange={(e) => setSurname(e.target.value)}
+                                className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                                placeholder=""
+                            />
+                        </div>
+                    </div>
+
+                    <button
+                        onClick={handleStart}
+                        disabled={!name.trim() || !surname.trim()}
+                        className="w-full bg-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 disabled:bg-slate-400 disabled:cursor-not-allowed"
+                    >
+                        დაწყება
+                    </button>
+                </div>
+            );
+        };
+
+        const BlockSelectionScreen = ({ onStartQuiz }) => {
+            const [selectedBlocks, setSelectedBlocks] = useState(new Set());
+            const totalBlocks = 8;
+
+            const handleBlockToggle = (blockNumber) => {
+                const newSelection = new Set(selectedBlocks);
+                if (newSelection.has(blockNumber)) {
+                    newSelection.delete(blockNumber);
+                } else {
+                    newSelection.add(blockNumber);
+                }
+                setSelectedBlocks(newSelection);
+            };
+
+            const handleSelectAll = (e) => {
+                if (e.target.checked) {
+                    setSelectedBlocks(new Set(Array.from({ length: totalBlocks }, (_, i) => i + 1)));
+                } else {
+                    setSelectedBlocks(new Set());
+                }
+            };
+
+            const handleStart = () => {
+                const selectedRules = new Set();
+                selectedBlocks.forEach(block => {
+                    const startRule = (block - 1) * 10 + 1;
+                    const endRule = block * 10;
+                    for (let i = startRule; i <= endRule; i++) {
+                        selectedRules.add(i);
+                    }
+                });
+
+                const filteredQuestions = allQuizQuestions.filter(q => selectedRules.has(q.rule));
+                onStartQuiz(filteredQuestions);
+            };
+
+            return (
+                <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8 w-full max-w-2xl mx-auto animate-fade-in">
+                    <h1 className="text-2xl md:text-3xl font-bold text-center text-slate-800 mb-2">აირჩიეთ ბლოკები</h1>
+                    <p className="text-center text-slate-500 mb-8">რომელი წესების მიხედვით გსურთ ცოდნის შემოწმება?</p>
+                    
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+                        {Array.from({ length: totalBlocks }, (_, i) => i + 1).map(block => {
+                            const start = (block - 1) * 10 + 1;
+                            const end = block * 10;
+                            return (
+                                <label key={block} className={`flex items-center p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 ${selectedBlocks.has(block) ? 'bg-blue-50 border-blue-500' : 'border-slate-300'}`}>
+                                    <input 
+                                        type="checkbox" 
+                                        className="h-5 w-5 rounded text-blue-600 focus:ring-blue-500 border-gray-300"
+                                        checked={selectedBlocks.has(block)}
+                                        onChange={() => handleBlockToggle(block)}
+                                    />
+                                    <span className="ml-3 font-medium text-slate-700">წესები {start}-{end}</span>
+                                </label>
+                            );
+                        })}
+                    </div>
+
+                    <div className="flex items-center justify-between mb-8">
+                         <label className="flex items-center cursor-pointer">
+                            <input 
+                                type="checkbox" 
+                                className="h-5 w-5 rounded text-blue-600 focus:ring-blue-500 border-gray-300"
+                                checked={selectedBlocks.size === totalBlocks}
+                                onChange={handleSelectAll}
+                            />
+                            <span className="ml-3 font-medium text-slate-700">ყველას არჩევა</span>
+                        </label>
+                    </div>
+
+                    <button
+                        onClick={handleStart}
+                        disabled={selectedBlocks.size === 0}
+                        className="w-full bg-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 disabled:bg-slate-400 disabled:cursor-not-allowed"
+                    >
+                        ტესტის დაწყება
+                    </button>
+                </div>
+            );
+        };
+
+        const ProgressBar = ({ current, total }) => {
+          const progressPercentage = total > 0 ? ((current) / total) * 100 : 0;
+          return (
+            <div className="mb-6">
+              <div className="flex justify-between items-center mb-2">
+                <p className="text-sm font-medium text-slate-600">
+                  კითხვა {current} / {total}
+                </p>
+              </div>
+              <div className="w-full bg-slate-200 rounded-full h-2.5">
+                <div
+                  className="bg-blue-600 h-2.5 rounded-full transition-all duration-500 ease-out"
+                  style={{ width: `${progressPercentage}%` }}
+                ></div>
+              </div>
+            </div>
+          );
+        };
+
+        const ResultFeedback = ({ isCorrect, correctAnswer, explanation }) => {
+          const baseClasses = 'p-4 rounded-lg border';
+          const correctClasses = 'bg-green-50 border-green-200 text-green-800';
+          const incorrectClasses = 'bg-red-50 border-red-200 text-red-800';
+
+          return (
+            <div className={`${baseClasses} ${isCorrect ? correctClasses : incorrectClasses}`}>
+              <div className="flex items-start">
+                <div className="flex-shrink-0 mt-0.5">
+                  {isCorrect ? <CheckIcon className="h-6 w-6 text-green-500" /> : <XIcon className="h-6 w-6 text-red-500" />}
+                </div>
+                <div className="ml-3">
+                  <h3 className="text-lg font-bold">
+                    {isCorrect ? 'სწორია! ყოჩაღ!' : `არასწორია. სწორი ფორმაა:`}
+                  </h3>
+                  {!isCorrect && (
+                    <p className="mt-1 text-base font-semibold">{correctAnswer}</p>
+                  )}
+                </div>
+              </div>
+              <div className="mt-4 pt-4 border-t border-current border-opacity-20">
+                <h4 className="font-bold text-sm mb-1">განმარტება:</h4>
+                <p className="text-base">{explanation}</p>
+              </div>
+            </div>
+          );
+        };
+
+        const QuizEndScreen = ({ score, total, onRestart, onChooseNewBlocks, user }) => {
+          const percentage = total > 0 ? Math.round((score / total) * 100) : 0;
+          return (
+            <div className="bg-white rounded-2xl shadow-lg p-8 text-center animate-fade-in">
+              <h2 className="text-3xl font-bold text-slate-800 mb-2">გილოცავთ, {user?.name}!</h2>
+              <p className="text-lg text-slate-600 mb-6">თქვენ დაასრულეთ ტესტი.</p>
+              <div className="mb-8">
+                <p className="text-xl font-medium">თქვენი შედეგი:</p>
+                <p className="text-5xl font-bold text-blue-600 my-2">
+                  {score} / {total}
+                </p>
+                <p className="text-lg text-slate-500">({percentage}%)</p>
+              </div>
+              <div className="flex flex-col sm:flex-row justify-center gap-4">
+                <button
+                    onClick={onRestart}
+                    className="bg-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                >
+                    თავიდან დაწყება
+                </button>
+                <button
+                    onClick={onChooseNewBlocks}
+                    className="bg-slate-200 text-slate-800 font-bold py-3 px-8 rounded-lg hover:bg-slate-300 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400"
+                >
+                    აირჩიეთ სხვა ბლოკები
+                </button>
+              </div>
+            </div>
+          );
+        };
+
+        const QuizCard = ({ question, onAnswerSelect, onNext, selectedAnswer, isCorrect, showResult }) => {
+          const [shuffledOptions, setShuffledOptions] = useState([]);
+
+          useEffect(() => {
+            setShuffledOptions([question.correct, question.incorrect].sort(() => Math.random() - 0.5));
+          }, [question]);
+
+          const getButtonClass = (option) => {
+            if (!showResult) {
+              return 'border-slate-300 hover:bg-blue-50 hover:border-blue-400';
+            }
+            if (option === question.correct) {
+              return 'bg-green-100 border-green-500 text-green-900';
+            }
+            if (option === selectedAnswer && !isCorrect) {
+              return 'bg-red-100 border-red-500 text-red-900';
+            }
+            return 'border-slate-300 opacity-60';
+          };
+
+          return (
+            <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8 w-full">
+              <h2 className="text-xl md:text-2xl font-bold text-center mb-8">
+                რომელი ფორმაა მართებული?
+              </h2>
+              <div className="space-y-4">
+                {shuffledOptions.map((option) => (
+                  <button
+                    key={option}
+                    onClick={() => onAnswerSelect(option)}
+                    disabled={showResult}
+                    className={`w-full text-left p-4 border-2 rounded-xl text-base md:text-lg transition-all duration-200 disabled:cursor-not-allowed ${getButtonClass(option)}`}
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
+              {showResult && (
+                <div className="mt-6 animate-fade-in">
+                  <ResultFeedback
+                    isCorrect={isCorrect}
+                    correctAnswer={question.correct}
+                    explanation={question.explanation}
+                  />
+                  <div className="mt-6 text-center">
+                    <button
+                      onClick={onNext}
+                      className="bg-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                    >
+                      შემდეგი
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        };
+
+        // --- APP ---
+        function App() {
+          const [gameState, setGameState] = useState('welcome'); // 'welcome', 'selection', 'quiz', 'end'
+          const [user, setUser] = useState(null);
+          const [activeQuestions, setActiveQuestions] = useState([]);
+          const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+          const [selectedAnswer, setSelectedAnswer] = useState(null);
+          const [isCorrect, setIsCorrect] = useState(null);
+          const [showResult, setShowResult] = useState(false);
+          const [score, setScore] = useState(0);
+
+          const handleWelcomeStart = (userData) => {
+            setUser(userData);
+            setGameState('selection');
+          };
+
+          const startQuiz = (questions) => {
+            if (questions.length === 0) return;
+            const shuffled = [...questions].sort(() => Math.random() - 0.5);
+            setActiveQuestions(shuffled);
+            setCurrentQuestionIndex(0);
+            setScore(0);
+            setSelectedAnswer(null);
+            setIsCorrect(null);
+            setShowResult(false);
+            setGameState('quiz');
+          };
+
+          const currentQuestion = activeQuestions[currentQuestionIndex];
+          const isQuizFinished = currentQuestionIndex >= activeQuestions.length && activeQuestions.length > 0;
+
+          useEffect(() => {
+            if (gameState === 'quiz' && isQuizFinished) {
+                setGameState('end');
+            }
+          }, [isQuizFinished, currentQuestionIndex, gameState]);
+
+          const handleAnswerSelect = useCallback((answer) => {
+            if (showResult) return;
+
+            const correct = answer === currentQuestion?.correct;
+            setSelectedAnswer(answer);
+            setIsCorrect(correct);
+            setShowResult(true);
+            if (correct) {
+              setScore(prev => prev + 1);
+            }
+          }, [currentQuestion, showResult]);
+
+          const handleNextQuestion = useCallback(() => {
+            setShowResult(false);
+            setSelectedAnswer(null);
+            setIsCorrect(null);
+            setCurrentQuestionIndex(prev => prev + 1);
+          }, []);
+
+          const handleRestart = useCallback(() => {
+            startQuiz(activeQuestions);
+          }, [activeQuestions]);
+
+          const handleChooseNewBlocks = () => {
+            setGameState('selection');
+          };
+
+          const renderGameState = () => {
+            switch(gameState) {
+                case 'welcome':
+                    return <WelcomeScreen onStart={handleWelcomeStart} />;
+                case 'selection':
+                    return <BlockSelectionScreen onStartQuiz={startQuiz} />;
+                case 'quiz':
+                    return (
+                        <>
+                            {activeQuestions.length > 0 && currentQuestion ? (
+                            <div className="animate-fade-in">
+                                <ProgressBar current={currentQuestionIndex + 1} total={activeQuestions.length} />
+                                <QuizCard
+                                key={currentQuestion.id}
+                                question={currentQuestion}
+                                onAnswerSelect={handleAnswerSelect}
+                                onNext={handleNextQuestion}
+                                selectedAnswer={selectedAnswer}
+                                isCorrect={isCorrect}
+                                showResult={showResult}
+                                />
+                            </div>
+                            ) : (
+                            <div className="text-center text-slate-500">იტვირთება კითხვები...</div>
+                            )}
+                        </>
+                    );
+                case 'end':
+                    return <QuizEndScreen score={score} total={activeQuestions.length} onRestart={handleRestart} onChooseNewBlocks={handleChooseNewBlocks} user={user} />;
+                default:
+                    return <WelcomeScreen onStart={handleWelcomeStart} />;
+            }
+          }
+
+          return (
+            <main className="min-h-screen flex flex-col items-center justify-center p-4 text-slate-800">
+              <div className="w-full max-w-2xl mx-auto">
+                {renderGameState()}
+              </div>
+            </main>
+          );
+        }
+
+        // --- RENDER ---
+        const container = document.getElementById('root');
+        const root = ReactDOM.createRoot(container);
+        root.render(<App />);
+    </script>
+</body>
+</html>
